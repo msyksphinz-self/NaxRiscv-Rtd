@@ -4,58 +4,57 @@
 NaxRiscv
 ==========
 
+NaxRiscv は現在、以下の特徴を持つコアである。
 
-NaxRiscv is a core currently characterised by :
+- レジスタ・リネーミング付きアウト・オブ・オーダ実行
+- スーパースカラ(例:2デコード、3実行ユニット、2リタイア)
+- (RV32/RV64) IMAFDCSU(Linux / Buildroot / Debian
+- ポータブルHDLだが、分散RAM付きのターゲットFPGA(これまで使用された参照はXilinxシリーズ7)
+- (比較的) 低い面積使用率と高い fmax をターゲットとする (最高の IPC ではない)
+- 分散型ハードウェア演算 (プラグインでパラメータ設定可能な空のトップレベル)
+- カスタマイズを容易にするパイプラインフレームワークをベースとしたフロントエンドの実現
+- 複数のリフィルおよびライトバックスロットを備えたノンブロッキングデータキャッシュ
+- BTB + GSHARE + RAS ブランチ予測
+- ハードウェアリフィル MMU (SV32、SV39)
+- 投機的キャッシュヒット予測により、レイテンシ3サイクルでロードを実行
+- verilatorシミュレーションとKonata(gem5ファイルフォーマット)によるパイプラインの視覚化
+- RISCV外部デバッグサポートv. 0.13.2の実装によるJTAG / OpenOCD / GDBサポート
+- Tilelinkによるメモリコヒーレンシのサポート
+- オプションのコヒーレントL2キャッシュ
 
-- Out of order execution with register renaming
-- Superscalar (ex : 2 decode, 3 execution units, 2 retire)
-- (RV32/RV64)IMAFDCSU (Linux / Buildroot / Debian)
-- Portable HDL, but target FPGA with distributed ram (Xilinx series 7 is the reference used so far)
-- Target a (relatively) low area usage and high fmax (not the best IPC)
-- Decentralized hardware elaboration (Empty toplevel parametrized with plugins)
-- Frontend implemented around a pipelining framework to ease customisation
-- Non-blocking Data cache with multiple refill and writeback slots
-- BTB + GSHARE + RAS branch predictors
-- Hardware refilled MMU (SV32, SV39)
-- Load to use latency of 3 cycles via the speculative cache hit predictor
-- Pipeline visualisation via verilator simulation and Konata (gem5 file format)
-- JTAG / OpenOCD / GDB support by implementing the RISCV External Debug Support v. 0.13.2
-- Support memory coherency via Tilelink
-- Optional coherent L2 cache
-
-Project development and status
+プロジェクトの開発と現状
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- This project is free and open source
-- It can run upstream Debian/Buildroot/Linux on hardware (ArtyA7 / Litex)
-- It started in October 2021, got some funding from NLnet later on (https://nlnet.nl/project/NaxRiscv/#ack)
+- このプロジェクトはフリーかつオープンソースである
+- ハードウェア(ArtyA7 / Litex)上でDebian/Buildroot/Linuxを上流で実行できる
+- 2021年10月に開始し、その後NLnetから資金援助を受けた(https://nlnet.nl/project/NaxRiscv/#ack)
 
-An third party documentation is also available here (from CEA-Leti): https://github.com/SpinalHDL/naxriscv_doc
+第三者によるドキュメントもこちらで入手可能(CEA-Letiより):https://github.com/SpinalHDL/naxriscv_doc
 
-Why a OoO core targeting FPGA
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+なぜFPGAをターゲットにしたOoOコアなのか
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-There is a few reasons
+理由はいくつかある
 
-- Improving single threaded performance.
-  During the tests made with VexRiscv running linux, it was clear that even if the can multi core help, "most" applications aren't made to take advantage of it.
-- Hiding the memory latency (There isn't much memory to have a big L2 cache on FPGA)
-- To experiment with more advanced hardware description paradigms (scala / SpinalHDL)
-- By personal interest
+- シングルスレッドのパフォーマンスを向上させるため。
+VexRiscvでLinuxを実行したテストでは、マルチコアが役立つとしても、「ほとんど」のアプリケーションはそれを活用するように作られていないことが明らかになった。
+- メモリレイテンシを隠蔽するため(FPGAに大きなL2キャッシュを搭載できるほどのメモリはない)。
+- より高度なハードウェア記述パラダイム(Scala/SpinalHDL)を試すため。
+- 個人的な興味から。
 
-Also there wasn't many OoO opensource softcore out there in the wild (Marocchino, RSD, OPA, ..).
-The bet was that it was possible to do better in some metrics, and hopefully being good enough to justify in some project
-the replacement of single issue / in order core softcore by providing better performances (at the cost of area).
+また、世の中にはOoOのオープンソース・ソフトコアがあまり存在していなかった(Marocchino、RSD、OPAなど)。
+いくつかの指標において、より良い結果を出すことができるという賭けだった。
+そして、より良いパフォーマンス(面積の犠牲を払って)を提供することで、1命令発行/インオーダ・コアのソフトコアを置き換えるのに十分なほど良い結果を出すことができるだろう。
 
-Additional resources
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+追加リソース
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 RISC-V Week Paris 2022 :
 
-- Slides : https://github.com/SpinalHDL/SpinalDoc/blob/master/presentation/en/nax_040522/slides_nax_040522.pdf
-- Video : https://peertube.f-si.org/videos/watch/b2c577b1-977a-48b9-b395-244ebf3d1ef6
+- スライド : https://github.com/SpinalHDL/SpinalDoc/blob/master/presentation/en/nax_040522/slides_nax_040522.pdf
+- ビデオ:https://peertube.f-si.org/videos/watch/b2c577b1-977a-48b9-b395-244ebf3d1ef6
 
 37C3 2023 :
 
-- Video : https://media.ccc.de/v/37c3-11777-open_cpu_soc_design_all_the_way_up_to_debian
+- ビデオ:https://media.ccc.de/v/37c3-11777-open_cpu_soc_design_all_the_way_up_to_debian
 

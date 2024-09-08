@@ -1,19 +1,18 @@
 .. role:: raw-html-m2r(raw)
    :format: html
 
-Hardware description
+ハードウェア記述
 ============================
 
-NaxRiscv was designed using SpinalHDL (a Scala hardware description library).
-One goal of the implementation was to explore new hardware elaboration paradigms as :
+NaxRiscvはSpinalHDL(Scalaハードウェア記述ライブラリ)を使用して設計された。
+実装の目標の一つは、新しいハードウェアエラボレーションパラダイムを探究することであった。
 
-- Automatic pipelining framework
-- Distributed hardware elaboration
-- Software paradigms applied to hardware elaboration (ex : software interface)
+- 自動パイプラインフレームワーク
+- 分散ハードウェアエラボレーション
+- ハードウェアエラボレーションに適用されるソフトウェアパラダイム(例:ソフトウェアインターフェース)
 
 
-A few notes about it :
+それについて少し説明すると、
 
-- You can get generate the Verilog or the VHDL from it.
-- A whole chapter (:ref:`abstraction_hdl`) of the doc is dedicated to explore the different paradigms used
-
+- Verilog または VHDL を生成することができる。
+- ドキュメントの章全体 (:ref:`abstraction_hdl`) が、使用されるさまざまなパラダイムの調査に充てられている。

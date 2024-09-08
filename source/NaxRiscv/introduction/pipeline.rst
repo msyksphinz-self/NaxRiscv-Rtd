@@ -1,24 +1,24 @@
 .. role:: raw-html-m2r(raw)
    :format: html
 
-Pipeline
-==========
+パイプライン
+==============
 
-NaxRiscv is composed of multiple pipelines :
+NaxRiscvは複数のパイプラインで構成されている。
 
-- **Fetch** : Which provide the raw data for a given PC, provide a first level of branch prediction and do the PC memory translation
-- **Frontend** : Which align, decode the fetch raw data, provide a second level of branch prediction, then allocates and rename the resources required for the instruction
-- **Execution units** : Which get the resources required for a given instruction (ex RF, PC, ..), execute it, write its result back and notify completion.
-- **LSU load** : Which read the data cache, translate the memory address, check for older store dependencies and eventually bypass a store value.
-- **LSU store** : Which translate the memory address and check for younger load having notified completion while having a dependency with the given store
-- **LSU writeback** : Which will write committed store into the data cache
+- **Fetch** : 特定のPCに生データを供給し、分岐予測の第一段階を提供し、PCのメモリ変換を行う
+- **Frontend** : フェッチした生のデータを整列させ、デコードし、分岐予測の第2レベルを提供し、その後、命令に必要なリソースを割り当て、リネームする
+- **実行ユニット** : 特定の命令に必要なリソースを取得し(RF、PCなど)、実行し、結果を書き戻し、完了を通知する。
+- **LSU ロード** : データキャッシュを読み込み、メモリアドレスを変換し、古いストア依存関係をチェックし、最終的にストア値をバイパスする。
+- **LSU ストア** : メモリアドレスを変換し、指定のストアに依存関係があり、完了通知を受け取った新しいロードをチェックする
+- **LSU ライトバック** : コミットされたストアをデータキャッシュに書き込む
 
-But it should also be noticed that there is a few state machines :
+しかし、いくつかのステートマシンがあることも認識しておくべきである。
 
-- **LSU Atomic** : Which sequentially execute SC/AMO operations once they are the next in line for commit.
-- **MMU refill** : Which walk the page tables to refill the TLB
-- **Privileged** : Which will check and update the CSR required for trap and privilege switches (mret, sret)
+- **LSU Atomic** : コミットの順番が回ってきたSC/AMO操作を順次実行する。
+- **MMU refill** : ページテーブルを巡回してTLBを再充填する
+- **Privileged** : トラップおよび特権スイッチに必要なCSRをチェックし、更新する(mret、sret)
 
-Here is a general architectural diagram :
+以下は一般的なアーキテクチャの図である:
 
 .. image:: /asset/image/pipeline_simple.png

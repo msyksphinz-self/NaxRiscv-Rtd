@@ -1,6 +1,6 @@
-===============
-Introduction
-===============
+===================
+イントロダクション
+===================
 
 .. include:: naxriscv.rst
 .. include:: pipeline.rst

@@ -1,24 +1,25 @@
 .. role:: raw-html-m2r(raw)
    :format: html
 
-Acknowledgment
+謝辞
 ===============
 
 
-Thanks to nlnet for the funding (see funding chapter)
+nlnetに資金援助に感謝する(資金援助の章を参照のこと)
 
-Thanks to Litex for the SoC infrastructure
+LitexにSoCインフラストラクチャに感謝する
 
 - https://github.com/enjoy-digital/litex
 
-Thanks to the CEA for the additional documentation
+CEAに追加の文書に感謝する
 
 - https://github.com/SpinalHDL/naxriscv_doc
 
-Funding
+資金援助
 =======
 
-This project is funded through the `NGI Zero Entrust Fund <https://nlnet.nl/entrust>`__, a fund established by `NLnet <https://nlnet.nl>`__ with financial support from the European Commission’s `Next Generation Internet <https://ngi.eu>`__ program. Learn more on the `NLnet project page <https://nlnet.nl/project/NaxRiscv#ack>`__.
+このプロジェクトは、欧州委員会の「次世代インターネット」プログラムの資金援助を受け、NLnetが設立した「NGIゼロエントラスト基金」を通じて資金提供されている。NLnetプロジェクトページ(<https://nlnet.nl/project/NaxRiscv#ack>)で詳細を確認できる。
+
 
 .. image:: https://nlnet.nl/logo/banner.png
    :width: 20%
