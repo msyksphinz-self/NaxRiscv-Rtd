@@ -16,7 +16,7 @@ CEAに追加の文書に感謝する
 - https://github.com/SpinalHDL/naxriscv_doc
 
 資金援助
-=======
+========
 
 このプロジェクトは、欧州委員会の「次世代インターネット」プログラムの資金援助を受け、NLnetが設立した「NGIゼロエントラスト基金」を通じて資金提供されている。NLnetプロジェクトページ(<https://nlnet.nl/project/NaxRiscv#ack>)で詳細を確認できる。
 

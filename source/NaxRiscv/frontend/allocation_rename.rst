@@ -1,28 +1,30 @@
 .. role:: raw-html-m2r(raw)
    :format: html
 
-Physical register allocation
+物理レジスタ割り当て
 ========================================================
 
-This is done by implementing a circular buffer containing the indexes of unallocated physical registers. This fits well into an FPGA with distributed ram.
+物理レジスタ割り当ては、割り当てられていない物理レジスタのインデックスを含む循環バッファを実装することで行われる。
+これは、分散RAMを搭載したFPGAにうまく適合する。
 
-Architectural to physical
+アーキテクチャ・レジスタから物理レジスタ
 ========================================================
 
-The translation from architectural register file to physical is done by implementing three tables :
+アーキテクチャ・レジスタファイルから物理レジスタへの変換は、以下の3つのテーブルを実装することで行われる。
 
-- **Speculative mapping** : Translate from architectural to physical, updated after the instruction decoding, implemented in distributed ram
-- **Committed mapping** : Translate from architectural to physical, updated after the instruction commit, implemented in distributed ram
-- **Location** : Translate from architectural to which mapping should be used (speculative or committed), implemented as register (need to be cleared on branch misprediction)
+- **投機的マッピング**:アーキテクチャ・インデックスから物理インデックスへの変換。命令デコード後に更新され、分散RAMで実装される
+- **コミット後マッピング** : アーキテクチャ・インデックスから物理インデックスへの変換。命令のコミット後に更新され、分散RAMで実装される
+- **Location** : アーキテクチャ・インデックスから、使用すべきマッピング・テーブル(投機的マッピングテーブル またはコミット後マッピングテーブル)への変換。レジスタとして実装される(分岐の予測ミスが発生した場合はクリアする必要がある）。
 
-This allows to revert the state of the translation instantly when the pipeline predicted a branch wrong.
+これにより、パイプラインが分岐を誤って予測した場合に、変換の状態を即座に元に戻すことができる。
 
 .. image:: /asset/image/rf_translation.png
 
-Physical to ROB ID
+物理インデックスからROB ID
 ========================================================
 
-Once the physical register file of the dependencies is calculated, they are translated into the ROB ID on which it depends. This is done by two things :
+依存関係の物理レジスタファイルが計算されると、それらは依存するROB IDに変換される。これは次の2つの方法で行われる。
 
-- **ROB Mapping** : A distributed ram which translates from physical to ROB ID
-- **Busy** : Which specify if the given ROB ID is still executing. It is set when a instruction is dispatched, cleared when the an instruction completes.
+- **ROBマッピング**:物理インデックスからROB IDに変換する分散RAM
+- **ビジー**:指定されたROB IDがまだ実行中であるかどうかを指定する。これは命令がディスパッチされたときに設定され、命令が完了したときにクリアされる。
+

@@ -1,7 +1,7 @@
 .. role:: raw-html-m2r(raw)
    :format: html
 
-Decoder
-============================
+デコーダ
+=========
 
-Nothing particular.
+特になし。
