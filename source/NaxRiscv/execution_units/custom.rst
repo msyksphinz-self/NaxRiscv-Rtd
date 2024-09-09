@@ -1,18 +1,23 @@
 
-
-Custom instruction
+カスタム命令
 ==============================
 
-There are multiple ways you can add custom instructions into NaxRiscv. The following chapter will provide some demo.
+NaxRiscvにカスタム命令を追加するにはいくつかの方法がある。本節ではいくつかのデモを示す。
 
-SIMD add
------------
+SIMD add命令
+---------------
 
-Let's define a plugin which will implement a SIMD add (4x8bits adder), working on the integer register file.
+.. Let's define a plugin which will implement a SIMD add (4x8bits adder), working on the integer register file.
+.. 
+.. The plugin will be based on the ExecutionUnitElementSimple which makes implementing ALU plugins simpler. Such a plugin can then be used to compose a given execution unit (hosted by a ExecutionUnitBase).
+.. 
+.. For instance the Plugin configuration could be :
 
-The plugin will be based on the ExecutionUnitElementSimple which makes implementing ALU plugins simpler. Such a plugin can then be used to compose a given execution unit (hosted by a ExecutionUnitBase).
+整数レジスタファイル上で動作するSIMD加算(4x8ビット加算器)を実装するプラグインを定義しよう。
 
-For instance the Plugin configuration could be :
+このプラグインは、ALUプラグインの実装をよりシンプルにするExecutionUnitElementSimpleをベースとする。このようなプラグインは、指定の実行ユニット(ExecutionUnitBaseがホスト)を構成するために使用できる。
+
+例えば、プラグイン構成は次のようになる。
 
 .. code:: scala
 
@@ -22,12 +27,12 @@ For instance the Plugin configuration could be :
     plugins += new IntAluPlugin("ALU0", aluStage = 0)
     plugins += new ShiftPlugin("ALU0" , aluStage = 0)
     plugins += new ShiftPlugin("ALU0" , aluStage = 0)
-    plugins += new SimdAddPlugin("ALU0") // <- We will implement this plugin
+    plugins += new SimdAddPlugin("ALU0") // <- このプラグインを実装することになる
 
-Plugin implementation
+プラグインの実装
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here is a example how this plugin could be implemented :
+以下はこのプラグインをどのように実装するかの例である:
 (https://github.com/SpinalHDL/NaxRiscv/blob/d44ac3a3a3a4328cf2c654f9a46171511a798fae/src/main/scala/naxriscv/execute/SimdAddPlugin.scala#L36)
 
 .. code:: scala
@@ -42,7 +47,7 @@ Here is a example how this plugin could be implemented :
     import naxriscv.interfaces.{RS1, RS2}
     import naxriscv.utilities.Plugin
 
-    //This plugin example will add a new instruction named SIMD_ADD which do the following :
+	//このプラグインの例では SIMD_ADD と呼ばれる以下の処理を行う新しい命令を実装する
     //
     //RD : Regfile Destination, RS : Regfile Source
     //RD( 7 downto  0) = RS1( 7 downto  0) + RS2( 7 downto  0)
@@ -54,30 +59,28 @@ Here is a example how this plugin could be implemented :
     //0000000----------000-----0001011   <- Custom0 func3=0 func7=0
     //       |RS2||RS1|   |RD |
     //
-    //Note :  RS1, RS2, RD positions follow the RISC-V spec and are common for all instruction of the ISA
+	//Note :  RS1, RS2, RD のビット位置はRISC-Vの仕様に準拠しており、このISAのすべての命令において共通である。
 
 
     object SimdAddPlugin{
-      //Define the instruction type and encoding that we wll use
+	  //命令タイプとエンコーディングを定義する
       val ADD4 = IntRegFile.TypeR(M"0000000----------000-----0001011")
     }
 
-    //ExecutionUnitElementSimple Is a base class which will be coupled to the pipeline provided by a ExecutionUnitBase with
-    //the same euId. It provide quite a few utilities to ease the implementation of custom instruction.
-    //Here we will implement a plugin which provide SIMD add on the register file.
-    //staticLatency=true specify that our plugin will never halt the pipeling, allowing the issue queue to statically
-    //wake up instruction which depend on its result.
+	//ExecutionUnitElementSimpleは、同じeuIdを持つExecutionUnitBaseによって提供されるパイプラインに結合されるベースクラスである。
+	// これは、カスタム命令の実装を容易にするための多数のユーティリティを提供する。
+	// ここでは、SIMD加算をレジスタファイルに追加するプラグインを実装する。
+	// staticLatency=true は、このプラグインがパイプラインを停止させることは決してないことを指定し、その結果に依存する命令を静的に発行キューで実行できるようにする。
     class SimdAddPlugin(val euId : String) extends ExecutionUnitElementSimple(euId, staticLatency = true) {
-      //We will assume our plugin is fully combinatorial
+	  //このプラグインが完全に組み合わせ回路で構成されると仮定する
       override def euWritebackAt = 0
 
-      //The setup code is by plugins to specify things to each others before it is too late
-      //create early blockOfCode will
+	  // セットアップコードは、プラグインが互いのことを指定するもので、手遅れになる前に設定する。
       override val setup = create early new Setup{
         //Let's assume we only support RV32 for now
         assert(Global.XLEN.get == 32)
 
-        //Specify to the ExecutionUnitBase that the current plugin will implement the ADD4 instruction
+		//現在のプラグインがADD4命令を実装することを実行ユニットベースに指定する。
         add(SimdAddPlugin.ADD4)
       }
 
@@ -100,10 +103,10 @@ Here is a example how this plugin could be implemented :
       }
     }
 
-NaxRiscv generation
+NaxRiscv の生成
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Then, to generate a NaxRiscv with this new plugin, we could run the following App :
+次に、新しいプラグイン付きのNaxRiscvを生成するために、以下のAppを実行することができる :
 (https://github.com/SpinalHDL/NaxRiscv/blob/d44ac3a3a3a4328cf2c654f9a46171511a798fae/src/main/scala/naxriscv/execute/SimdAddPlugin.scala#L71)
 
 .. code:: scala
@@ -138,16 +141,16 @@ Then, to generate a NaxRiscv with this new plugin, we could run the following Ap
     }
 
 
-To run this App, you can go to the NaxRiscv directory and run :
+このAppを実行するために、NaxRiscvのディレクトリで以下を実行する:
 
 .. code:: shell
 
     sbt "runMain naxriscv.execute.SimdAddNaxGen"
 
-Software test
+ソフトウェアテスト
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Then let's write some assembly test code : (https://github.com/SpinalHDL/NaxSoftware/tree/849679c70b238ceee021bdfd18eb2e9809e7bdd0/baremetal/simdAdd)
+次に、アセンブリテストコードを書こう : (https://github.com/SpinalHDL/NaxSoftware/tree/849679c70b238ceee021bdfd18eb2e9809e7bdd0/baremetal/simdAdd)
 
 .. code:: shell
 
@@ -178,36 +181,36 @@ Then let's write some assembly test code : (https://github.com/SpinalHDL/NaxSoft
     fail:
         j fail
 
-Compile it with
+以下のようにしてコンパイルする
 
 .. code:: shell
 
     make clean rv32im
 
-Simulation
+シミュレーション
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-And the run a simulation in src/test/cpp/naxriscv (You will have to setup things as described in its readme first)
+src/test/cpp/naxriscv のシミュレーションを実行する (最初にreadmeに書いてあるセットアップを行う必要がある)
 
 .. code:: shell
 
     make clean compile
     ./obj_dir/VNaxRiscv --load-elf ../../../../ext/NaxSoftware/baremetal/simdAdd/build/rv32im/simdAdd.elf --spike-disable --pass-symbol pass --fail-symbol fail --trace
 
-Which will output the value 2224666 in the shell :D
+シェルに2224666と表示されれば成功である :D
 
 Conclusion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-So overall this example didn't introduce how to specify some additional decoding, nor how to define multi-cycle ALU. (TODO).
-But you can take a look in the IntAluPlugin, ShiftPlugin, DivPlugin, MulPlugin and BranchPlugin which are doing those things using the same ExecutionUnitElementSimple base class.
+したがって、この例では、追加のデコードの指定方法や、マルチサイクルALUの定義方法については紹介していない。(TODO)。
+しかし、IntAluPlugin、ShiftPlugin、DivPlugin、MulPlugin、BranchPluginでは、同じExecutionUnitElementSimpleベースクラスを使用して、それらの処理を行っている。
 
-Also, you don't have to use the ExecutionUnitElementSimple base class, you can have more fundamental accesses, as the LoadPlugin, StorePlugin, EnvCallPlugin.
+また、ExecutionUnitElementSimpleベースクラスを使用する必要はなく、LoadPlugin、StorePlugin、EnvCallPluginのように、より基本的なアクセスも可能である。
 
-Hardcore way
+ハードコアな方法
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Note, here is an example of the same instruction, but implemented without the ExecutionUnitElementSimple facilities :
+同じ命令の例だが、ExecutionUnitElementSimpleの機能を使用せずに実装した例を以下に示す:
 (https://github.com/SpinalHDL/NaxRiscv/blob/72b80e3345ecc3a25ca913f2b741e919a3f4c970/src/main/scala/naxriscv/execute/SimdAddPlugin.scala#L100)
 
 .. code:: scala

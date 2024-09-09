@@ -1,13 +1,13 @@
 ===============
-Execution units
+実行ユニット
 ===============
 
-The main characteristic of an execution unit is the way in which it will wake up the instruction which depend on it.
+実行ユニットの主な特徴は、それに依存する命令をウェイクアップする方法である。
 
-- **Static wake** : For EU with fixed latency (no stall), a static wake can be asked to the issue queue. This can reduce the completion-to-use delay by two cycles
-- **Dynamic wake** : For EU with variable latency (which can stall), the EU is responsible to send a wakes commands to the issue queue.
+- **静的ウェイクアップ** : 固定レイテンシ(ストールなし)のEUの場合、発行キューは静的ウェイクアップが可能である。これにより、complete-to-useの遅延を2サイクル短縮できる。
+- **動的ウェイクアップ** : 可変レイテンシ(ストールあり)のEUの場合、EUは発行キューにウェイクアップ・コマンドを送信する責任がある。
 
-Here is an illustration with two EU (one with static wake, one with dynamic wake) interacting with the issue queue to wake up dependent instructions
+以下は、2つのEU(静的ウェイクアップと動的ウェイクアップのそれぞれ1つ)が、依存する命令をウェイクアップさせるために、発行キューとやりとりする様子を示した図解である。
 
 .. image:: /asset/image/eu_wakes.png
 
